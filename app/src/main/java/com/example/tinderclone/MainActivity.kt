@@ -6,9 +6,9 @@ import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.barryzeha.dotsloadingview.components.DotsLoadingComponent
 import com.example.tinderclone.fragments.ActivityBottomSheetFragment
-import com.example.tinderclone.fragments.SwipedActivitiesFragment
 import com.example.tinderclone.models.Activity
 import com.example.tinderclone.utils.ApiService
 import com.example.tinderclone.utils.DatabaseHelper
@@ -17,6 +17,7 @@ import retrofit2.Call
 
 class MainActivity : AppCompatActivity() {
     private lateinit var textActivity : TextView
+    private lateinit var cadre : ConstraintLayout
     private lateinit var greenButton : LinearLayout
     private lateinit var redButton : LinearLayout
     private lateinit var blueButton : LinearLayout
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity() {
             val bottomSheetFragment = ActivityBottomSheetFragment()
             bottomSheetFragment.show(supportFragmentManager, "activity_bottom_sheet")
         }
+
 
     }
 

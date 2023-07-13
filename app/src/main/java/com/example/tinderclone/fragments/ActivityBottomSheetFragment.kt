@@ -1,14 +1,12 @@
 package com.example.tinderclone.fragments
 
 import ActivitiesAdapter
-import android.content.Context
-import android.content.res.Resources
+import SwipeToDeleteCallback
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,32 +19,36 @@ class ActivityBottomSheetFragment : BottomSheetDialogFragment() {
 
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var recyclerView: RecyclerView
+    private lateinit var text: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_hello, container, false)
 
         dbHelper = DatabaseHelper(view.context)
         recyclerView = view.findViewById(R.id.recycleview_adapter)
-        recyclerView.layoutManager = LinearLayoutManager(view.context)
-        val activitiesAdapter = ActivitiesAdapter(dbHelper.getAllActivities() as MutableList<Activity>,view.context)
-        recyclerView.adapter = activitiesAdapter
+        text = view.findViewById(R.id.textView)
+        text.visibility = View.INVISIBLE
 
-        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(activitiesAdapter))
-        itemTouchHelper.attachToRecyclerView(recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(view.context)
+        val listActivities = dbHelper.getAllActivities() as MutableList<Activity>
+
+        if (listActivities.count() == 0){
+            text.visibility = View.VISIBLE
+            recyclerView.visibility = View.INVISIBLE
+        }
+        else{
+            text.visibility = View.INVISIBLE
+            recyclerView.visibility = View.VISIBLE
+            val activitiesAdapter = ActivitiesAdapter(listActivities,view.context)
+            recyclerView.adapter = activitiesAdapter
+
+            val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(activitiesAdapter))
+            itemTouchHelper.attachToRecyclerView(recyclerView)
+        }
+
         return view
     }
 
 
 }
 
-class SwipeToDeleteCallback(private val adapter: ActivitiesAdapter) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-
-    override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-        return false
-    }
-
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        val position = viewHolder.adapterPosition
-        adapter.deleteItem(position)
-    }
-}
